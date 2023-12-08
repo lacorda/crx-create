@@ -30,6 +30,11 @@ declare module '*.json' {
   export default content;
 }
 
+declare module '*?inline' {
+  const src: string
+  export default src
+}
+
 declare module "react/jsx-runtime" {
   export default any;
 }

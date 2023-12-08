@@ -10,10 +10,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "types": [
-      "vite/client",
-      "node"
-    ],
+    // "types": [
+    //   "vite/client",
+    //   "node"
+    // ],
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "lib": [

@@ -13,7 +13,7 @@ const manifest = {
   },
   action: {
     default_popup: 'pages/popup/index.html',
-    default_icon: 'icon-34.png',
+    default_icon: 'icon-48.png',
   },
   content_scripts: [
     {
@@ -38,7 +38,7 @@ const manifest = {
   permissions: ['storage', 'sidePanel'],
   web_accessible_resources: [
     {
-      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png'],
+      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-48.png'],
       matches: ['*://*/*'],
     },
   ],

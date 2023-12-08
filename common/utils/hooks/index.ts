@@ -1,4 +1,6 @@
-import { genBem } from './tools';
+import { genBem } from '../tools';
+
+export { default as useStorage } from './useStorage';
 
 /**
  * 返回BEM规范类名方法

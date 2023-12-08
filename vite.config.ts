@@ -6,7 +6,7 @@ import makeManifest from './utils/plugins/manifest/make-manifest';
 import customDynamicImport from './utils/plugins/custom-dynamic-import';
 import addHmr from './utils/plugins/add-hmr';
 import watchRebuild from './utils/plugins/watch-rebuild';
-import { generateKey, firstUpperCase } from './utils/tools'
+import { generateKey } from './utils/tools'
 
 const projectName = process.env.__PROJECT_NAME__ || "_example";
 
@@ -15,10 +15,9 @@ const outDir = resolve(rootDir, "dist");
 const outProjectDir = resolve(outDir, "packages", projectName);
 
 const commonDir = resolve(rootDir, "common");
-const packagesDir = resolve(rootDir, "packages");
-const projectDir = resolve(packagesDir, projectName);
-const pagesDir = resolve(projectDir, "pages");
+const projectDir = resolve(rootDir, "packages", projectName);
 
+const pagesDir = resolve(projectDir, "pages");
 // 静态资源目录
 const publicDir = resolve(projectDir, "public");
 
@@ -62,30 +61,22 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(pagesDir, 'popup', 'index.html'),
-        // devtools: resolve(pagesDir, 'devtools', 'index.html'),
-        // panel: resolve(pagesDir, 'panel', 'index.html'),
-        // content: resolve(pagesDir, 'content', 'index.ts'),
-        // background: resolve(pagesDir, 'background', 'index.ts'),
-        // contentStyle: resolve(pagesDir, 'content', 'style.scss'),
-        // newtab: resolve(pagesDir, 'newtab', 'index.html'),
-        // options: resolve(pagesDir, 'options', 'index.html'),
-        // sidepanel: resolve(pagesDir, 'sidepanel', 'index.html'),
+        content: resolve(pagesDir, 'content', 'index.ts'),
+        background: resolve(pagesDir, 'background', 'index.ts'),
+        contentStyle: resolve(pagesDir, 'content', 'style.scss'),
+        devtools: resolve(pagesDir, 'devtools', 'index.html'),
+        panel: resolve(pagesDir, 'panel', 'index.html'),
+        newtab: resolve(pagesDir, 'newtab', 'index.html'),
+        options: resolve(pagesDir, 'options', 'index.html'),
+        sidepanel: resolve(pagesDir, 'sidepanel', 'index.html'),
       },
       output: {
         entryFileNames: `packages/${projectName}/pages/[name]/index.js`,
         chunkFileNames: isDev ? `packages/${projectName}/assets/js/[name].js` : `packages/${projectName}/assets/js/[name].[hash].js`,
         assetFileNames: assetInfo => {
-          const { dir, name: _name } = path.parse(assetInfo.name);
-          const assetFolder = dir.split("/").at(-1);
-          const name = assetFolder + firstUpperCase(_name);
-
-          // const assetFileName = name === 'contentStyle' ? `${name}${getCacheInvalidationKey()}` : name;
-          // return `packages/${projectName}/assets/[ext]/${assetFileName}.chunk.[ext]`;
-
-          if (name === "contentStyle") {
-            return `packages/${projectName}/assets/css/contentStyle${getCacheInvalidationKey()}.chunk.css`;
-          }
-          return `packages/${projectName}/assets/[ext]/${name}.chunk.[ext]`;
+          const { name } = path.parse(assetInfo.name);
+          const assetFileName = name === 'contentStyle' ? `${name}${getCacheInvalidationKey()}` : name;
+          return `packages/${projectName}/assets/[ext]/${assetFileName}.chunk.[ext]`;
         },
       },
     },
