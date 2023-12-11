@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@ant-design/icons': ^5.2.6
   '@rollup/plugin-typescript': ^11.1.5
   '@types/chrome': ^0.0.253
   '@types/node': ^20.10.3
@@ -10,6 +11,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^6.10.0
   '@typescript-eslint/parser': ^6.10.0
   '@vitejs/plugin-react': ^4.2.0
+  ahooks: ^3.7.8
   antd: ^5.12.1
   chokidar: ^3.5.3
   classnames: ^2.3.2
@@ -24,6 +26,7 @@ specifiers:
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-react-refresh: ^0.4.4
   lint-staged: ^15.2.0
+  monaco-editor: ^0.45.0
   npm-run-all: ^4.1.5
   prettier: ^3.1.0
   react: ^18.2.0
@@ -38,8 +41,11 @@ specifiers:
   ws: ^8.14.2
 
 dependencies:
+  '@ant-design/icons': 5.2.6_biqbaboplfbrettd7655fr4n2y
+  ahooks: 3.7.8_react@18.2.0
   antd: 5.12.1_biqbaboplfbrettd7655fr4n2y
   classnames: 2.3.2
+  monaco-editor: 0.45.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   webextension-polyfill: 0.10.0
@@ -996,6 +1002,10 @@ packages:
     resolution: {integrity: sha512-RpQH4rXLuvTXKR0zqHq3go0RVXYv/YVqv4TnPH95VbwUxZdQlK1EtcMvQvMpDngHbt13Csh9Z4qT9AbkiQH5BA==}
     dev: true
 
+  /@types/js-cookie/2.2.7:
+    resolution: {integrity: sha1-ImqeMWgINaYYjoh/OYjmDATT9qM=}
+    dev: false
+
   /@types/json-schema/7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
@@ -1210,6 +1220,29 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true
+
+  /ahooks-v3-count/1.0.0:
+    resolution: {integrity: sha512-V7uUvAwnimu6eh/PED4mCDjE7tokeZQLKlxg9lCTMPhN+NjsSbtdacByVlR1oluXQzD3MOw55wylDmQo4+S9ZQ==}
+    dev: false
+
+  /ahooks/3.7.8_react@18.2.0:
+    resolution: {integrity: sha512-e/NMlQWoCjaUtncNFIZk3FG1ImSkV/JhScQSkTqnftakRwdfZWSw6zzoWSG9OMYqPNs2MguDYBUFFC6THelWXA==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.23.5
+      '@types/js-cookie': 2.2.7
+      ahooks-v3-count: 1.0.0
+      dayjs: 1.11.10
+      intersection-observer: 0.12.2
+      js-cookie: 2.2.1
+      lodash: 4.17.21
+      react: 18.2.0
+      resize-observer-polyfill: 1.5.1
+      screenfull: 5.2.0
+      tslib: 2.6.2
+    dev: false
 
   /ajv/6.12.6:
     resolution: {integrity: sha1-uvWmLoArB9l3A0WG+MO69a3ybfQ=}
@@ -2599,6 +2632,10 @@ packages:
       side-channel: 1.0.4
     dev: true
 
+  /intersection-observer/0.12.2:
+    resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
+    dev: false
+
   /is-array-buffer/3.0.2:
     resolution: {integrity: sha512-y+FyyR/w8vfIRq4eQcM1EYgSTnmHXPqaF+IgzgraytCFq5Xh8lllDVmAZolPJiZttZLeFSINPYMaEJ7/vWUa1w==}
     dependencies:
@@ -2836,6 +2873,10 @@ packages:
       set-function-name: 2.0.1
     dev: true
 
+  /js-cookie/2.2.1:
+    resolution: {integrity: sha1-aeEG3F1YBolFYpAqpbrsN0Tpsrg=}
+    dev: false
+
   /js-tokens/4.0.0:
     resolution: {integrity: sha1-GSA/tZmR35jjoocFDUZHzerzJJk=}
 
@@ -2985,6 +3026,10 @@ packages:
     resolution: {integrity: sha1-VYqlO0O2YeGSWgr9+japoQhf5Xo=}
     dev: true
 
+  /lodash/4.17.21:
+    resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=}
+    dev: false
+
   /log-update/6.0.0:
     resolution: {integrity: sha512-niTvB4gqvtof056rRIrTZvjNYE4rCUzO6X/X+kYjd7WFxXeJ0NwEFnRxX6ehkvv3jTwrXnNdtAak5XYZuIyPFw==}
     engines: {node: '>=18'}
@@ -3056,6 +3101,10 @@ packages:
   /minimist/1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
     dev: true
+
+  /monaco-editor/0.45.0:
+    resolution: {integrity: sha512-mjv1G1ZzfEE3k9HZN0dQ2olMdwIfaeAAjFiwNprLfYNRSz7ctv9XuCT7gPtBGrMUeV1/iZzYKj17Khu1hxoHOA==}
+    dev: false
 
   /ms/2.1.2:
     resolution: {integrity: sha1-0J0fNXtEP0kzgqjrPM0YOHKuYAk=}
@@ -4093,6 +4142,11 @@ packages:
       loose-envify: 1.4.0
     dev: false
 
+  /screenfull/5.2.0:
+    resolution: {integrity: sha1-ZTPVJNMGIfwSg7lpIUbz8TqT0bo=}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /scroll-into-view-if-needed/3.1.0:
     resolution: {integrity: sha512-49oNpRjWRvnU8NyGVmUaYG4jtTkNonFZI86MmGRDqBphEK2EXT9gdEUoQPZhuBM8yWHxCWbobltqYO5M4XrUvQ==}
     dependencies:
@@ -4410,7 +4464,6 @@ packages:
 
   /tslib/2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-    dev: true
 
   /type-check/0.4.0:
     resolution: {integrity: sha1-B7ggO/pwVsBlcFDjzNLDdzC6uPE=}

@@ -1,3 +1,48 @@
 .chrome-extension-popup {
   background-color: #fff;
+  padding: 12px;
+  width: 380px;
+
+  &--dark {
+    background-color: #191919;
+    color: #fff;
+  }
+
+  &--light {
+    background-color: #fff;
+    color: #191919;
+  }
+
+  .cellitem {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    & + .cellitem {
+      margin-top: 12px;
+    }
+
+    &__label {
+      font-size: 16px;
+      font-weight: bold;
+      width: 80px;
+      min-width: 80px;
+    }
+
+    &__value {
+      flex: 1;
+    }
+  }
+
+  .example-image {
+    width: 32px;
+  }
+
+  .example-background {
+    display: block;
+    background: url("../../assets/images/icon-128.png") no-repeat;
+    width: 32px;
+    height: 32px;
+    background-size: contain;
+  }
 }

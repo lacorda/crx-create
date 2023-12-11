@@ -1,7 +1,6 @@
-import React from 'react';
 import './Options.scss';
 
-const Options: React.FC = () => {
+const Options = () => {
   return <div className="container">Options</div>;
 };
 

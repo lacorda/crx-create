@@ -1,7 +1,6 @@
-import React from 'react';
 import './Panel.scss';
 
-const Panel: React.FC = () => {
+const Panel = () => {
   return (
     <div className="container">
       <h1 className="">Dev Tools Panel</h1>

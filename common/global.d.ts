@@ -35,6 +35,11 @@ declare module '*?inline' {
   export default src
 }
 
+declare module '*?worker' {
+  const content: string
+  export default src
+}
+
 declare module "react/jsx-runtime" {
   export default any;
 }

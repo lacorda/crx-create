@@ -8,12 +8,13 @@ import withErrorBoundary from '@common/hoc/withErrorBoundary';
 
 const Newtab = () => {
   const theme = useStorage(ThemeStorage);
+  const [, darkAndLight] = theme.split('-');
 
   return (
     <div
       className="App"
       style={{
-        backgroundColor: theme === 'light' ? '#ffffff' : '#000000',
+        backgroundColor: darkAndLight === 'light' ? '#ffffff' : '#000000',
       }}>
       <img src={logo} className="App-logo" alt="logo" />
       Example NewTab
