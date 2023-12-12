@@ -1,9 +1,14 @@
 import classnames from 'classnames';
 import { Button, ConfigProvider, Space } from 'antd';
+import { useAsyncEffect } from 'ahooks'
 import { useBem, useStorage } from '@common/utils/hooks';
-import { Editor, Icon } from '../../components';
+import {
+  // Editor,
+  Icon
+} from '../../components';
 import ThemeStorage from '@common/storages/themeStorage';
 import { THEME_COLOR_MAP } from '@common/config';
+import { getCurrentTab } from '@common/utils/chrome';
 import icon from '../../assets/images/icon-128.png';
 import './Popup.scss';
 
@@ -16,6 +21,11 @@ const Popup = () => {
 
   const theme = useStorage(ThemeStorage);
   const [themeColor, darkAndLight] = theme.split('-');
+
+  useAsyncEffect(async () => {
+    const tab = await getCurrentTab();
+    console.log('🍄  popup ui 3', tab);
+  })
 
   return (
     <ConfigProvider theme={{ token: THEME_COLOR_MAP[themeColor] }}>
@@ -50,12 +60,12 @@ const Popup = () => {
             />
           </div>
         </div>
-        <div className={itemBem()}>
+        {/* <div className={itemBem()}>
           <div className={itemBem('label')}>编辑器:</div>
           <div className={itemBem('value')}>
             <Editor theme={darkAndLight} />
           </div>
-        </div>
+        </div> */}
       </div>
     </ConfigProvider>
   )

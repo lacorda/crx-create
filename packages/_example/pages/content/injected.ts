@@ -1,3 +1,7 @@
+/**
+ * This file is injected into the page.
+ */
+
 import ThemeStorage from '@common/storages/themeStorage';
 
 async function toggleTheme() {
