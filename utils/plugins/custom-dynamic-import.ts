@@ -20,5 +20,12 @@ export default function customDynamicImport(): PluginOption {
         right: ')',
       };
     },
+    resolveImportMeta(property) {
+      // content使用import.meta.url会报错，所以这里做了处理
+      if (property === 'url') {
+        return 'undefined';
+      }
+      return null;
+    }
   };
 }

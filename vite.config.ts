@@ -15,7 +15,8 @@ const outDir = resolve(rootDir, "dist");
 const outProjectDir = resolve(outDir, "packages", projectName);
 
 const commonDir = resolve(rootDir, "common");
-const projectDir = resolve(rootDir, "packages", projectName);
+const packageDir = resolve(rootDir, "packages");
+const projectDir = resolve(packageDir, projectName);
 
 const pagesDir = resolve(projectDir, "pages");
 // 静态资源目录
@@ -50,6 +51,7 @@ export default defineConfig({
     alias: {
       "@root": rootDir,
       "@common": commonDir,
+      "@packages": packageDir,
     },
   },
   build: {
