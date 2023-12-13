@@ -20,14 +20,3 @@ export const getCurrentTab = () => {
 export const getTab = (tabId: number) => {
   return chrome.tabs.get(tabId);
 }
-
-// 安装后打开页面
-export const openPageOnInstalled = (path) => {
-  chrome.runtime.onInstalled.addListener(({ reason }) => {
-    if (reason === 'install') {
-      chrome.tabs.create({
-        url: path
-      });
-    }
-  });
-}

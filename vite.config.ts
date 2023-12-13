@@ -87,7 +87,7 @@ export default defineConfig({
     // manifest.json编译
     makeManifest({
       getCacheInvalidationKey,
-      projectDir: outProjectDir,
+      projectName,
     }),
     //  copy static files
     copy({

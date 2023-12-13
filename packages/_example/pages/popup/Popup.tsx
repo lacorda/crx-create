@@ -7,6 +7,7 @@ import {
   Icon
 } from '../../components';
 import ThemeStorage from '@common/storages/themeStorage';
+import MessageStorage from '@common/storages/messageStorage';
 import { THEME_COLOR_MAP } from '@common/constants';
 import { getCurrentTab } from '@common/utils/chrome';
 import icon from '../../assets/images/icon-128.png';
@@ -20,20 +21,52 @@ const Popup = () => {
   const itemBem = useBem(itemCls);
 
   const theme = useStorage(ThemeStorage);
+  const message = useStorage(MessageStorage);
+
   const [themeColor, darkAndLight] = theme.split('-');
+
+  const createPort = () => {
+    // 新建长连接
+    const port = chrome.runtime.connect({ name: "from-popup" });
+
+    port.postMessage({ from: "popup 0" });
+
+    // 接收background的消息
+    port.onMessage.addListener(function (msg) {
+      console.log('🍄  >>>> popup接收到的:', msg, port.name);
+      console.log('🍄  background的消息');
+      if (msg.from === "background 1") {
+        port.postMessage({ from: "popup 1" });
+      } else if (msg.from === "background 2") {
+        port.postMessage({ from: "popup 2" });
+      } else if (msg.from === "background 3") {
+        console.log('🍄  msg', msg);
+      }
+    });
+  }
+
 
   useAsyncEffect(async () => {
     const tab = await getCurrentTab();
     console.log('🍄  popup ui 3', tab);
-  })
+
+    createPort();
+  }, [])
 
   return (
     <ConfigProvider theme={{ token: THEME_COLOR_MAP[themeColor] }}>
       <div className={classnames(bem(), bem('', darkAndLight))}>
         <div className={itemBem()}>
+          <div className={itemBem('label')}>Storage:</div>
+          <div className={itemBem('value')}>
+            {message.testCustom?.from}
+          </div>
+        </div>
+        <div className={itemBem()}>
           <div className={itemBem('label')}>图片:</div>
           <div className={itemBem('value')}>
-            <img src={icon} className="example-image" alt="logo" /></div>
+            <img src={icon} className="example-image" alt="logo" />
+          </div>
         </div>
         <div className={itemBem()}>
           <div className={itemBem('label')}>背景图片:</div>

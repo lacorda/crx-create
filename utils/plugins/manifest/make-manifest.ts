@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import colorLog from '../../log';
 import ManifestParser from './manifest-parser';
+import projectConfig from "../../../project.config";
 import type { PluginOption } from 'vite';
 import url from 'url';
 import * as process from 'process';
@@ -10,6 +11,7 @@ const { resolve } = path;
 
 const rootDir = resolve(__dirname, '..', '..', '..');
 const manifestFile = resolve(rootDir, 'manifest.js');
+const packagesDir = resolve(rootDir, "dist", "packages");
 
 const getManifestWithCacheBurst = (): Promise<{ default: chrome.runtime.ManifestV3 }> => {
   const withCacheBurst = (path: string) => `${path}?${Date.now().toString()}`;
@@ -23,8 +25,10 @@ const getManifestWithCacheBurst = (): Promise<{ default: chrome.runtime.Manifest
   return import(withCacheBurst(manifestFile));
 };
 
-export default function makeManifest(config?: { getCacheInvalidationKey?: () => string, projectDir: string }): PluginOption {
-  function makeManifest(manifest: chrome.runtime.ManifestV3, to: string, cacheKey?: string) {
+export default function makeManifest(config?: { getCacheInvalidationKey?: () => string, projectName: string }): PluginOption {
+  function makeManifest(manifest: chrome.runtime.ManifestV3, name: string, cacheKey?: string) {
+    const to = resolve(packagesDir, name);
+
     if (!fs.existsSync(to)) {
       fs.mkdirSync(to);
     }
@@ -37,10 +41,16 @@ export default function makeManifest(config?: { getCacheInvalidationKey?: () => 
       });
     }
 
+    if (projectConfig[name]) {
+      manifest = { ...manifest, ...projectConfig[name] }
+    }
+
     fs.writeFileSync(manifestPath, ManifestParser.convertManifestToString(manifest));
 
     colorLog(`Manifest file copy complete: ${manifestPath}`, 'success');
   }
+
+  const { getCacheInvalidationKey, projectName } = config;
 
   return {
     name: 'make-manifest',
@@ -48,10 +58,9 @@ export default function makeManifest(config?: { getCacheInvalidationKey?: () => 
       this.addWatchFile(manifestFile);
     },
     async writeBundle() {
-      const invalidationKey = config.getCacheInvalidationKey?.();
+      const invalidationKey = getCacheInvalidationKey?.();
       const manifest = await getManifestWithCacheBurst();
-      console.log('🍄  config.projectDir', config.projectDir);
-      makeManifest(manifest.default, config.projectDir, invalidationKey);
+      makeManifest(manifest.default, projectName, invalidationKey);
     },
   };
 }

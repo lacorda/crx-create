@@ -12,6 +12,8 @@ export type BaseStorage<D> = {
   set: (value: ValueOrUpdate<D>) => Promise<void>;
   getSnapshot: () => D | null;
   subscribe: (listener: () => void) => () => void;
+  getProperty: (property: string) => any;
+  setProperty: (value: any) => void;
 };
 
 export function createStorage<D>(key: string, fallback: D, config?: { storageType?: StorageType }): BaseStorage<D> {
@@ -61,6 +63,26 @@ export function createStorage<D>(key: string, fallback: D, config?: { storageTyp
     return cache;
   };
 
+  const getProperty = (property: string) => {
+    return new Promise((resolve) => {
+      if (Object.prototype.toString.call(cache) === '[object Object]') {
+        resolve(cache ? cache[property] : null)
+      }
+      resolve(null);
+    })
+  }
+
+  const setProperty = async (obj: any) => {
+    if (Object.prototype.toString.call(cache) === '[object Object]') {
+      cache = { ...cache, ...obj };
+    } else {
+      cache = obj;
+    }
+
+    await chrome.storage[storageType].set({ [key]: cache });
+    _emitChange();
+  }
+
   _getDataFromStorage().then(data => {
     cache = data;
     _emitChange();
@@ -71,5 +93,7 @@ export function createStorage<D>(key: string, fallback: D, config?: { storageTyp
     set,
     getSnapshot,
     subscribe,
+    getProperty,
+    setProperty,
   };
 }

@@ -25,7 +25,6 @@ export default function addHmrIntoView(watchPath: string) {
 
   // reload when tab is visible
   function reloadWhenTabIsVisible(): void {
-    console.log('🍄  visibilitychange ', document.hidden);
 
     !document.hidden && pendingReload && reload();
   }

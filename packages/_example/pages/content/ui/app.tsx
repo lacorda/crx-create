@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { Drawer, FloatButton, ConfigProvider, Button, Space } from 'antd';
 import { useLocalStorageState } from 'ahooks';
+import MessageStorage from '@common/storages/messageStorage';
 import { Icon } from '../../../components';
 import { useBem } from '@common/utils/hooks';
 import { THEME_STORAGE_KEY, THEME_COLOR_MAP } from '@common/constants';
@@ -19,16 +20,49 @@ export default function App() {
   });
   const [themeColor, darkAndLight] = theme.split('-');
 
+  const createPort = () => {
+    // 新建长连接
+    const port = chrome.runtime.connect({ name: "from-content" });
+
+    port.postMessage({ from: "content 0" });
+
+    // 接收background的消息
+    port.onMessage.addListener(function (msg) {
+      console.log('🍄  >>>> content接收到的:', msg, port.name);
+      if (msg.from === "background 1") {
+        port.postMessage({ from: "content 1" });
+      } else if (msg.from === "background 2") {
+        port.postMessage({ from: "content 2" });
+      } else if (msg.from === "background 3") {
+        console.log('🍄  msg', msg);
+      }
+    });
+  }
+
   useEffect(() => {
     console.log('content view loaded');
+
+    createPort();
   }, []);
 
   const handleOpenDrawer = () => {
     setOpen(true);
+    MessageStorage.setProperty({
+      content: {
+        openDrawer: true,
+        from: 'content'
+      }
+    })
   }
 
   const handleClose = () => {
     setOpen(false);
+    MessageStorage.setProperty({
+      content: {
+        openDrawer: false,
+        from: 'content'
+      }
+    })
   }
 
   const handleChangeThemeColor = (color: string) => {

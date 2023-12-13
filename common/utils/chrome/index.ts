@@ -2,13 +2,7 @@
 export {
   getCurrentTab,
   getTab,
-  openPageOnInstalled
 } from './tabs';
-
-// 消息相关API
-export {
-  sendMessage
-} from './message';
 
 // 获取插件ID
 export function getExtensionId() {
