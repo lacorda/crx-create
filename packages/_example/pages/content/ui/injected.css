@@ -1,5 +1,13 @@
-.crx-create {
+#crx-create-root-_example .chrome-extension-content {
   position: fixed;
   bottom: 12px;
   right: 12px;
+}
+#crx-create-root-_example .chrome-extension-content__drawer--dark {
+  background-color: #191919;
+  color: #fff;
+}
+#crx-create-root-_example .chrome-extension-content__drawer--light {
+  background-color: #fff;
+  color: #191919;
 }
