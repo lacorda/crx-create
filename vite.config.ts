@@ -103,4 +103,8 @@ export default defineConfig({
     addHmr({ background: enableHmrInBackgroundScript, view: true }),
     isDev && watchRebuild({ afterWriteBundle: regenerateCacheInvalidationKey }),
   ],
+  define: {
+    __DEV__: isDev,
+    __PROJECT_NAME__: JSON.stringify(projectName),
+  },
 })

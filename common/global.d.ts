@@ -43,3 +43,5 @@ declare module '*?worker' {
 declare module "react/jsx-runtime" {
   export default any;
 }
+
+declare var __PROJECT_NAME__: string;
