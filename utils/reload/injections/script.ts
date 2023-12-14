@@ -5,8 +5,6 @@ export default function addHmrIntoScript(watchPath: string) {
     chrome.runtime.reload();
   };
 
-  console.log('🍄  addHmrIntoScript>>> watchPath', watchPath);
-
   initReloadClient({
     watchPath,
     onUpdate: reload,

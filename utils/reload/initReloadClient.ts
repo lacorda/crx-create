@@ -23,7 +23,6 @@ export default function initReloadClient({
   // 监听 WebSocket 的消息
   socket.addEventListener('message', event => {
     const message = MessageInterpreter.receive(String(event.data));
-    console.log('🍄 client message', JSON.stringify(message));
 
     switch (message.type) {
       case 'do_update': {

@@ -1,15 +1,15 @@
 import MessageStorage from '@common/storages/messageStorage';
+import { sendMessageContent } from '@common/utils/chrome';
 
-// 监听 runtime.onInstalled() 事件
-chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  if (reason === 'install') {
+// 监听安装事件
+chrome.runtime.onInstalled.addListener(async (details) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听安装事件', Date.now(), details);
+  if (details.reason === 'install') {
     await MessageStorage.setProperty({
       install: {
         from: 'background'
       }
     });
-
-    console.log('🍄  message storage', await MessageStorage.get());
 
     // 安装完成后打开新页面
     // chrome.tabs.create({
@@ -18,23 +18,36 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   }
 });
 
-// 消息通信，保存数据
+// 接收来自插件内部的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.greeting === 'tip') {
-    MessageStorage.getProperty('tip').then(sendResponse);
-    return true;
-  }
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 接收来自插件内部的消息', Date.now(), message, sender, sendResponse);
+});
+
+// 接收来自网页的消息
+// FIXME: onMessageExternal只能在background中使用
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 接收来自网页的消息', Date.now(), message, sender, sendResponse);
+
+  // FIXME: Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+  // chrome.runtime.sendMessage(message);
+  // setTimeout(() => {
+  //   chrome.runtime.sendMessage(message);
+  // }, 1000);
+
+
+  // background内使用chrome.tabs.sendMessage向content发送消息
+  sendMessageContent(message);
 });
 
 // 建立长连接时触发（content, background, popup插件内的通讯）
 chrome.runtime.onConnect.addListener(function (port) {
-  console.log('🍄  建立长连接', port);
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听长连接建立', Date.now(), port);
 
   // 监听 content 发送的消息
   port.onMessage.addListener(function (msg) {
-    console.log('🍄  >>>> background接收到的:', msg, port.name);
+    console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听长连接的消息', Date.now(), port, msg);
+
     if (port.name === 'from-content') {
-      console.log('🍄  content的消息');
       if (msg.from === "content 0") {
         port.postMessage({ from: 'background 1' });
       } else if (msg.from === "content 1") {

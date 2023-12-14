@@ -2,6 +2,7 @@
 export {
   getCurrentTab,
   getTab,
+  sendMessageContent,
 } from './tabs';
 
 // 获取插件ID

@@ -3,8 +3,6 @@ import initReloadClient from '../initReloadClient';
 export default function addHmrIntoView(watchPath: string) {
   let pendingReload = false;
 
-  console.log('🍄  addHmrIntoView>>> watchPath', watchPath);
-
   initReloadClient({
     watchPath,
     onUpdate: () => {

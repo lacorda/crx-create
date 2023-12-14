@@ -20,29 +20,34 @@ export default function App() {
   });
   const [themeColor, darkAndLight] = theme.split('-');
 
-  const createPort = () => {
+  const addListener = () => {
     // 新建长连接
+    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接建立', Date.now());
     const port = chrome.runtime.connect({ name: "from-content" });
 
+    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接 发送消息', Date.now());
     port.postMessage({ from: "content 0" });
 
-    // 接收background的消息
-    port.onMessage.addListener(function (msg) {
-      console.log('🍄  >>>> content接收到的:', msg, port.name);
+    port.onMessage.addListener((msg) => {
+      console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接 接收消息', Date.now(), port, msg);
+
       if (msg.from === "background 1") {
         port.postMessage({ from: "content 1" });
       } else if (msg.from === "background 2") {
         port.postMessage({ from: "content 2" });
-      } else if (msg.from === "background 3") {
-        console.log('🍄  msg', msg);
       }
     });
+
+    chrome.runtime.onMessage.addListener((msg) => {
+      console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收 并 发送消息', Date.now(), msg);
+      chrome.runtime.sendMessage(msg);
+    })
   }
 
   useEffect(() => {
     console.log('content view loaded');
 
-    createPort();
+    addListener();
   }, []);
 
   const handleOpenDrawer = () => {

@@ -7,11 +7,15 @@ export const getCurrentTab = () => {
     if (!chrome.tabs) {
       return resolve(null);
     }
-    chrome.tabs.query(queryOptions, ([tab]) => {
-      if (chrome.runtime.lastError) {
-        return reject(chrome.runtime.lastError);
+    chrome.tabs.query(queryOptions, (tabs) => {
+      if (!tabs || !tabs.length) {
+        return resolve(null);
       }
-      return resolve(tab);
+
+      if (chrome.runtime.lastError) {
+        return reject(null);
+      }
+      return resolve(tabs[0]);
     });
   });
 }
@@ -19,4 +23,17 @@ export const getCurrentTab = () => {
 // 获取指定标签页
 export const getTab = (tabId: number) => {
   return chrome.tabs.get(tabId);
+}
+
+// 向content发送信息
+export const sendMessageContent = async (message: any) => {
+  console.log('🍄  sendMessageContent 1');
+  const tab = await getCurrentTab() as chrome.tabs.Tab;
+  if (!tab) {
+    return;
+  }
+
+  setTimeout(() => {
+    chrome.tabs.sendMessage(tab.id, message);
+  }, 300)
 }
