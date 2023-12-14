@@ -1,0 +1,21 @@
+@import "../../assets/styles/theme.scss";
+
+#crx-create-root-_example {
+  .chrome-extension-content {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+
+    &__drawer {
+      &--dark {
+        background-color: #191919;
+        color: #fff;
+      }
+
+      &--light {
+        background-color: #fff;
+        color: #191919;
+      }
+    }
+  }
+}

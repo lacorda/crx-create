@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "dev": "pnpm code:hmr && (run-p code:wss code:watch)",
-    "code:wss": "node utils/reload/initReloadServer.js",
-    "code:hmr": "rollup --config utils/reload/rollup.config.mjs",
-    "code:watch": "cross-env __DEV__=true vite build -w --mode development",
+    "dev": "pnpm reload:hmr && (run-p reload:wss reload:watch)",
+    "reload:hmr": "rollup --config utils/reload/rollup.config.mjs",
+    "reload:wss": "node utils/reload/initReloadServer.js",
+    "reload:watch": "cross-env __DEV__=true vite build -w --mode development",
+    "build:iybSky": "tsc --noEmit && cross-env __PROJECT_NAME__=iybSky vite build",
+    "dev:iybSky": "pnpm reload:hmr && (run-p reload:wss reload:watch:iybSky)",
+    "reload:watch:iybSky": "cross-env __DEV__=true __PROJECT_NAME__=iybSky vite build -w --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
