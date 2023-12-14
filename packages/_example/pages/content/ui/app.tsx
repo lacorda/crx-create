@@ -42,6 +42,16 @@ export default function App() {
       console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收 并 发送消息', Date.now(), msg);
       chrome.runtime.sendMessage(msg);
     })
+
+    // 监听来自网页的消息，window只能在content中使用
+    window.addEventListener("message", (event) => {
+      if (event.source !== window) return;
+
+      if (event.data?.data?.from === 'webpage') {
+        console.log('🍄  content: >>>>>>>>>>>>>>>>>> 监听来自网页的消息', event.data);
+        chrome.runtime.sendMessage(event.data);
+      }
+    }, false);
   }
 
   useEffect(() => {
