@@ -7,8 +7,11 @@ import customDynamicImport from './utils/plugins/custom-dynamic-import';
 import addHmr from './utils/plugins/add-hmr';
 import watchRebuild from './utils/plugins/watch-rebuild';
 import { generateKey } from './utils/tools'
+import { INPUT_FILES } from './utils/constants';
+import projectConfig from './project.config';
 
 const projectName = process.env.__PROJECT_NAME__ || "_example";
+const inputFiles = projectConfig[projectName].includesFiles || INPUT_FILES;
 
 const rootDir = resolve(__dirname);
 const outDir = resolve(rootDir, "dist");
@@ -61,17 +64,24 @@ export default defineConfig({
     reportCompressedSize: isProduction,
     // emptyOutDir: !isDev,
     rollupOptions: {
-      input: {
-        popup: resolve(pagesDir, 'popup', 'index.html'),
-        content: resolve(pagesDir, 'content', 'index.ts'),
-        background: resolve(pagesDir, 'background', 'index.ts'),
-        contentStyle: resolve(pagesDir, 'content', 'style.scss'),
-        devtools: resolve(pagesDir, 'devtools', 'index.html'),
-        panel: resolve(pagesDir, 'panel', 'index.html'),
-        newtab: resolve(pagesDir, 'newtab', 'index.html'),
-        options: resolve(pagesDir, 'options', 'index.html'),
-        sidepanel: resolve(pagesDir, 'sidepanel', 'index.html'),
-      },
+      input: (() => {
+        const map = {};
+        inputFiles.forEach((key) => {
+          switch (key) {
+            case 'content':
+            case 'background':
+              map[key] = resolve(pagesDir, key, 'index.ts');
+              break;
+            case 'contentStyle':
+              map[key] = resolve(pagesDir, 'content', 'style.scss');
+              break;
+            default:
+              map[key] = resolve(pagesDir, key, 'index.html');
+              break;
+          }
+        })
+        return map;
+      })(),
       output: {
         entryFileNames: `packages/${projectName}/pages/[name]/index.js`,
         chunkFileNames: isDev ? `packages/${projectName}/assets/js/[name].js` : `packages/${projectName}/assets/js/[name].[hash].js`,

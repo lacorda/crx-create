@@ -1,11 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import colorLog from '../../log';
-import ManifestParser from './manifest-parser';
-import projectConfig from "../../../project.config";
 import type { PluginOption } from 'vite';
 import url from 'url';
 import * as process from 'process';
+import _merge from 'lodash.merge';
+import colorLog from '../../log';
+import ManifestParser from './manifest-parser';
+import makeManifestPages from './make-pages';
+import projectConfig from "../../../project.config";
 
 const { resolve } = path;
 
@@ -34,15 +36,16 @@ export default function makeManifest(config?: { getCacheInvalidationKey?: () => 
     }
     const manifestPath = resolve(to, 'manifest.json');
 
+    if (projectConfig[name]) {
+      manifest = _merge(manifest, projectConfig[name]);
+      manifest = makeManifestPages(projectConfig[name], manifest);
+    }
+
     if (cacheKey) {
-      manifest.content_scripts.forEach(script => {
+      manifest.content_scripts?.forEach(script => {
         // content_scripts中的css文件名中的<KEY>会被替换成hash
         script.css &&= script.css.map(css => css.replace('<KEY>', cacheKey));
       });
-    }
-
-    if (projectConfig[name]) {
-      manifest = { ...manifest, ...projectConfig[name] }
     }
 
     fs.writeFileSync(manifestPath, ManifestParser.convertManifestToString(manifest));

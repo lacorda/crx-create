@@ -9,9 +9,9 @@
     "reload:hmr": "rollup --config utils/reload/rollup.config.mjs",
     "reload:wss": "node utils/reload/initReloadServer.js",
     "reload:watch": "cross-env __DEV__=true vite build -w --mode development",
+    "reload:watch:iybSky": "cross-env __DEV__=true __PROJECT_NAME__=iybSky vite build -w --mode development",
     "build:iybSky": "tsc --noEmit && cross-env __PROJECT_NAME__=iybSky vite build",
     "dev:iybSky": "pnpm reload:hmr && (run-p reload:wss reload:watch:iybSky)",
-    "reload:watch:iybSky": "cross-env __DEV__=true __PROJECT_NAME__=iybSky vite build -w --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "ahooks": "^3.7.8",
     "antd": "^5.12.1",
     "classnames": "^2.3.2",
+    "lodash.merge": "^4.6.2",
     "monaco-editor": "^0.45.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/chrome": "^0.0.253",
+    "@types/lodash.merge": "^4.6.9",
     "@types/node": "^20.10.3",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",

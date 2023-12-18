@@ -4,6 +4,7 @@ specifiers:
   '@ant-design/icons': ^5.2.6
   '@rollup/plugin-typescript': ^11.1.5
   '@types/chrome': ^0.0.253
+  '@types/lodash.merge': ^4.6.9
   '@types/node': ^20.10.3
   '@types/react': ^18.2.37
   '@types/react-dom': ^18.2.15
@@ -26,6 +27,7 @@ specifiers:
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-react-refresh: ^0.4.4
   lint-staged: ^15.2.0
+  lodash.merge: ^4.6.2
   monaco-editor: ^0.45.0
   npm-run-all: ^4.1.5
   prettier: ^3.1.0
@@ -45,6 +47,7 @@ dependencies:
   ahooks: 3.7.8_react@18.2.0
   antd: 5.12.2_biqbaboplfbrettd7655fr4n2y
   classnames: 2.3.2
+  lodash.merge: 4.6.2
   monaco-editor: 0.45.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -53,6 +56,7 @@ dependencies:
 devDependencies:
   '@rollup/plugin-typescript': 11.1.5_ngoe36cwtpygtdwyvowvphp2cu
   '@types/chrome': 0.0.253
+  '@types/lodash.merge': 4.6.9
   '@types/node': 20.10.4
   '@types/react': 18.2.45
   '@types/react-dom': 18.2.17
@@ -1021,6 +1025,16 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
+    dev: true
+
+  /@types/lodash.merge/4.6.9:
+    resolution: {integrity: sha512-23sHDPmzd59kUgWyKGiOMO2Qb9YtqRO/x4IhkgNUiPQ1+5MUVqi6bCZeq9nBJ17msjIMbEIO5u+XW4Kz6aGUhQ==}
+    dependencies:
+      '@types/lodash': 4.14.202
+    dev: true
+
+  /@types/lodash/4.14.202:
+    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
     dev: true
 
   /@types/minimatch/5.1.2:
@@ -3038,7 +3052,6 @@ packages:
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha1-VYqlO0O2YeGSWgr9+japoQhf5Xo=}
-    dev: true
 
   /lodash/4.17.21:
     resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=}

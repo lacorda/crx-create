@@ -13,3 +13,5 @@ export const ID_IN_BACKGROUND_SCRIPT = 'virtual:reload-on-update-in-background-s
 export const ID_IN_VIEW = 'virtual:reload-on-update-in-view';
 
 export const DUMMY_CODE = `export default function(){};`;
+
+export const INPUT_FILES = ['popup', 'content', 'background', 'contentStyle', 'devtools', 'panel', 'newtab', 'options', 'sidepanel'];
