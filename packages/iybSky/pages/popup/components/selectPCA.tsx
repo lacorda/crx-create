@@ -1,16 +1,18 @@
 import { useSafeState, useMount } from "ahooks";
 import classnames from "classnames";
 import { Select, Space } from "antd";
-import { genBem } from "@common/utils/tools";
+import { useBem } from "@common/utils/hooks";
 import { genPCAData, getCities, getAreas } from "../utils/pca";
 import { SelectPCAProps } from "../types";
 
 const PCAData = genPCAData();
 const { PCAP } = PCAData;
 
+const prefixCls = "component-select-pca";
+
 const SelectPCA = (props: SelectPCAProps) => {
   const { className, onChange, defaultValue } = props;
-  const bem = genBem("component-select-pca");
+  const bem = useBem(prefixCls);
 
   const cls = classnames(bem(), className);
 

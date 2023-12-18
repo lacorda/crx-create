@@ -1,6 +1,5 @@
 
 import axios from "axios";
-import { toast } from "@common/utils/tools";
 import { selectAsyncStorage } from "../../utils/storage";
 
 let storageTemp: any;
@@ -47,28 +46,20 @@ const fetchTemp = async (data: Record<string, any>) => {
 const withStorage = () => {
   const map = {};
   for (const [key, value] of Object.entries(storageTemp)) {
-    map[key] = value.options;
+    map[key] = (value as any).options;
   }
-
-  console.log('🍄  map', map);
 
   selectAsyncStorage.set({
     ...storageTemp,
     ...map,
   });
-
-  setTimeout(() => {
-    selectAsyncStorage.get().then((res) => {
-      console.log('🍄  selectAsyncStorage', res);
-    })
-  }, 1000);
 }
 
 const addListener = () => {
   let pageData;
 
   chrome.runtime.onMessage.addListener(async (message) => {
-    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收 并 发送消息', Date.now(), message);
+    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收消息', Date.now(), message);
 
     const { type, data } = message;;
 
