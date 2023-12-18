@@ -14,7 +14,7 @@ export default {
     },
   },
   iybSky: {
-    includesFiles: ['popup', 'content', 'background', 'contentStyle'],
+    includesFiles: ['popup', 'content', 'background'],
     name: "表单自动填充工具",
     description: "投保流程辅助工具",
     // 与网页通信

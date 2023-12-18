@@ -1,49 +1,102 @@
-/**
- * This file is injected into the page.
- */
 
-import ThemeStorage from '@common/storages/themeStorage';
+import axios from "axios";
+import { toast } from "@common/utils/tools";
+import { selectAsyncStorage } from "../../utils/storage";
 
-async function toggleTheme() {
-  console.log('initial theme', await ThemeStorage.get());
-  ThemeStorage.toggleDarkAndLight();
-  console.log('toggled theme', await ThemeStorage.get());
-}
+let storageTemp: any;
 
-void toggleTheme();
+selectAsyncStorage.get().then((res) => {
+  storageTemp = res;
+});
 
-const addListener = () => {
-  // 新建长连接
-  console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接建立', Date.now());
-  const port = chrome.runtime.connect({ name: "from-content" });
+const fetchTemp = async (data: Record<string, any>) => {
+  if (!data) return;
 
-  console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接 发送消息', Date.now());
-  port.postMessage({ from: "content 0" });
+  for (const [key, value] of Object.entries(data)) {
+    if (value.initFetchKey) {
+      const { method, data, url } = value.wprops.initFetch;
 
-  port.onMessage.addListener((msg) => {
-    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 长连接 接收消息', Date.now(), port, msg);
+      let params = {};
+      if (method === "get" || method === "GET") {
+        params = data;
+        delete value.wprops.initFetch.data;
+      }
 
-    if (msg.from === "background 1") {
-      port.postMessage({ from: "content 1" });
-    } else if (msg.from === "background 2") {
-      port.postMessage({ from: "content 2" });
+      if (!storageTemp[value.initFetchKey]?.fetched) {
+        storageTemp[value.initFetchKey] = storageTemp[value.initFetchKey] || {};
+        storageTemp[value.initFetchKey].fetched = true;
+
+        const res = await axios({
+          method,
+          data,
+          url,
+          params,
+        });
+        const options = Object.values(res.data?.content || {})[0];
+        storageTemp[value.initFetchKey].options = options;
+      }
+    } else if (
+      Object.prototype.toString.call(value) === "[object Object]" &&
+      !value.widget
+    ) {
+      await fetchTemp(value);
     }
+  }
+};
+
+const withStorage = () => {
+  const map = {};
+  for (const [key, value] of Object.entries(storageTemp)) {
+    map[key] = value.options;
+  }
+
+  console.log('🍄  map', map);
+
+  selectAsyncStorage.set({
+    ...storageTemp,
+    ...map,
   });
 
-  chrome.runtime.onMessage.addListener((msg) => {
-    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收 并 发送消息', Date.now(), msg);
-    chrome.runtime.sendMessage(msg);
-  })
+  setTimeout(() => {
+    selectAsyncStorage.get().then((res) => {
+      console.log('🍄  selectAsyncStorage', res);
+    })
+  }, 1000);
+}
 
-  // 监听来自网页的消息，window只能在content中使用
-  window.addEventListener("message", (event) => {
-    if (event.source !== window) return;
+const addListener = () => {
+  let pageData;
 
-    if (event.data?.data?.from === 'webpage') {
-      console.log('🍄  content: >>>>>>>>>>>>>>>>>> 监听来自网页的消息', event.data);
-      chrome.runtime.sendMessage(event.data);
+  chrome.runtime.onMessage.addListener(async (message) => {
+    console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收 并 发送消息', Date.now(), message);
+
+    const { type, data } = message;;
+
+    if (type === 'iybSKy-to-crx') {
+      pageData = data;
+      await fetchTemp(pageData);
+      withStorage();
+
+      chrome.runtime.sendMessage({
+        type: 'iybSkyData',
+        data
+      });
     }
-  }, false);
+
+    if (type === 'popup-to-content') {
+      if (data.action === 'open') {
+        chrome.runtime.sendMessage({
+          type: 'iybSkyData',
+          data: pageData
+        });
+      }
+
+      if (data.action === 'random') {
+        // content -> 网页 发送消息，只能使用window.postMessage
+        window.postMessage({ type: "crx-to-iybSKy", data: data.data }, "*");
+      }
+    }
+  })
 }
 
 addListener();

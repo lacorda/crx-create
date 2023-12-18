@@ -12,7 +12,6 @@ import { THEME_COLOR_MAP } from '@common/constants';
 import { getCurrentTab } from '@common/utils/chrome';
 import icon from '../../assets/images/icon-128.png';
 import './Popup.scss';
-import { useEffect } from 'react';
 
 const prefixCls = 'chrome-extension-popup';
 const itemCls = 'cellitem';

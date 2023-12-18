@@ -18,7 +18,10 @@
     "@ant-design/icons": "^5.2.6",
     "ahooks": "^3.7.8",
     "antd": "^5.12.1",
+    "axios": "^1.6.2",
     "classnames": "^2.3.2",
+    "dayjs": "^1.11.10",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "monaco-editor": "^0.45.0",
     "react": "^18.2.0",
@@ -28,6 +31,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/chrome": "^0.0.253",
+    "@types/lodash.clonedeep": "^4.5.9",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "^20.10.3",
     "@types/react": "^18.2.37",

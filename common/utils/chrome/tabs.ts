@@ -27,13 +27,10 @@ export const getTab = (tabId: number) => {
 
 // 向content发送信息
 export const sendMessageContent = async (message: any) => {
-  console.log('🍄  sendMessageContent 1');
   const tab = await getCurrentTab() as chrome.tabs.Tab;
   if (!tab) {
     return;
   }
 
-  setTimeout(() => {
-    chrome.tabs.sendMessage(tab.id, message);
-  }, 300)
+  chrome.tabs.sendMessage(tab.id, message);
 }

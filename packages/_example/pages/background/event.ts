@@ -36,7 +36,10 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
 
 
   // background内使用chrome.tabs.sendMessage向content发送消息
-  sendMessageContent(message);
+  // background是一直存在的，此时可能content未加载完成，所以需要延迟发送消息
+  setTimeout(() => {
+    sendMessageContent(message);
+  }, 300);
 });
 
 // 建立长连接时触发（content, background, popup插件内的通讯）

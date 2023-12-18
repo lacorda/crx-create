@@ -1,6 +1,13 @@
 import { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 
+export { default as toast } from './toast';
+
+// setTimeout as promise
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 /**
  * 生成BEM规范的className
  * @param {string} block

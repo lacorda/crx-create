@@ -1,11 +1,13 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
+import { sendMessageContent } from '@common/utils/chrome';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
 
-// 使用 content script 的 css 时，需要重新加载扩展，因为浏览器会自动缓存 css
-reloadOnUpdate('pages/content/style.scss');
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 接收来自网页的消息', Date.now(), message, sender, sendResponse);
 
-console.log('background loaded');
-
-import './event';
+  setTimeout(() => {
+    sendMessageContent(message);
+  }, 300);
+});

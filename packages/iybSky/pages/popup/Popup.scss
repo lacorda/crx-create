@@ -1,48 +1,29 @@
-.chrome-extension-popup {
+.App {
   background-color: #fff;
-  padding: 12px;
-  width: 380px;
 
-  &--dark {
-    background-color: #191919;
-    color: #fff;
+  .random-tips {
+    margin-top: 24px;
+    padding: 12px;
+    color: #ff6e0d;
+    background-color: #fff6f0;
   }
 
-  &--light {
-    background-color: #fff;
-    color: #191919;
+  .tab-content {
+    padding: 0 12px;
   }
 
-  .cellitem {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    & + .cellitem {
-      margin-top: 12px;
-    }
-
-    &__label {
-      font-size: 16px;
-      font-weight: bold;
-      width: 80px;
-      min-width: 80px;
-    }
-
-    &__value {
-      flex: 1;
+  .ant-row {
+    .ant-col {
+      flex: none !important;
     }
   }
-
-  .example-image {
-    width: 32px;
+  .ant-form-item {
+    margin-bottom: 12px !important;
   }
-
-  .example-background {
-    display: block;
-    background: url("../../assets/images/icon-128.png") no-repeat;
-    width: 32px;
-    height: 32px;
-    background-size: contain;
+  .ant-space-compact {
+    .ant-input-number-compact-first-item .ant-input-number-group-addon,
+    .ant-input-number-compact-last-item .ant-input-number {
+      border-radius: 0;
+    }
   }
 }

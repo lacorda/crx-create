@@ -11,7 +11,9 @@ const makeManifestPages = (config, manifest) => {
   if (!files.includes('content')) {
     delete manifest.content_scripts;
   } else if (!files.includes('contentStyle')) {
-    delete manifest.content_scripts.css;
+    manifest.content_scripts.forEach(script => {
+      delete script.css;
+    })
   }
 
   if (!files.includes('background')) {
