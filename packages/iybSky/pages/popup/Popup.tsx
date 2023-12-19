@@ -9,12 +9,14 @@ import {
   Space,
   InputNumber,
   Select,
+  Input,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
-import { HighlightOutlined } from "@ant-design/icons";
+import { HighlightOutlined, SaveOutlined } from "@ant-design/icons";
 import { useSetState, useAsyncEffect, useLatest } from "ahooks";
 import { sendMessageContent } from "@common/utils/chrome";
-import SelectPCA from "./components/selectPCA";
+import { Icon } from '@common/components';
+import { SelectPCA, PopupDrawer } from "./components";
 import {
   navs,
   birthTypes,
@@ -24,17 +26,22 @@ import {
   randomTips,
 } from "./config";
 
-import { getBirthdate, copy, getRandom } from "./utils/tools";
+import { getBirthdate, copy, getRandom, flattenObject } from "./utils/tools";
 import BankCardGenerator from "./utils/bankGen";
 import RandomGenerator, { genCertNo } from "./utils/generator";
 import { SelectPCAValue } from "./types";
-import { selectAsyncStorage } from "../../utils/storage";
+import { selectAsyncStorage, insureStorage } from "../../utils/storage";
 import "./Popup.scss";
 
 const DEFAULT_AGE = 18;
 const DEFAULT_BIRTHDAY = getBirthdate(DEFAULT_AGE);
 const RandomGen = new RandomGenerator();
 const BankCardGen = new BankCardGenerator();
+
+let insureStorageTemp: any = {};
+insureStorage.get().then(res => {
+  insureStorageTemp = res || {};
+});
 
 const Popup = () => {
   const initIdcardValue: any = {
@@ -56,11 +63,17 @@ const Popup = () => {
     tab: navs[0].key,
     ...initIdcardValue,
     ...initBankcardValue,
+    remark: '',
     selectAsyncMap: undefined,
     pageData: undefined,
+    showDrawer: false,
+    drawerType: ''
   });
 
   const pageDataRef = useLatest(state.pageData);
+  const remarkRef = useLatest(state.remark);
+
+  const [form] = Form.useForm();
 
   const {
     tab,
@@ -70,19 +83,35 @@ const Popup = () => {
     birthday,
     gender,
     bankType,
+    remark,
     selectAsyncMap,
+    showDrawer,
+    drawerType,
   } = state;
 
   useEffect(() => {
     sendMessageContent({
-      type: "popup-to-content",
-      data: { action: "open" }
+      source: "popup-to-content",
+      type: 'open',
     });
 
-    chrome.runtime.onMessage.addListener((request) => {
-      if (request.type === "iybSkyData") {
-        console.log('🍄  popup: >>>>>>>>>>>>>>>>>> 接收消息', Date.now(), request);
-        setState({ pageData: request.data });
+    chrome.runtime.onMessage.addListener((message) => {
+      const { source, type, data } = message;
+      if (source === "content-to-crx") {
+        console.log('🍄  popup: >>>>>>>>>>>>>>>>>> 接收消息', Date.now(), type, data);
+
+        if (type === 'pageData') {
+          setState({ pageData: data });
+          return;
+        }
+
+        if (type === 'formData') {
+          insureStorage.set({
+            ...insureStorageTemp,
+            [remarkRef.current]: data
+          });
+          insureStorageTemp[remarkRef.current] = data;
+        }
       }
     });
   }, []);
@@ -108,11 +137,9 @@ const Popup = () => {
       });
 
       sendMessageContent({
-        type: 'popup-to-content',
-        data: {
-          action: 'random',
-          data: randomData,
-        }
+        source: 'popup-to-content',
+        type: 'random',
+        data: randomData
       });
     } catch (error) {
       message.error(error.message || error);
@@ -177,16 +204,92 @@ const Popup = () => {
     copy({ text: bankNos[index] });
   };
 
-  const renderRandom = () => {
+  const handlePull = () => {
+    setState({
+      showDrawer: true,
+      drawerType: 'pull',
+    });
+  }
+
+  const handlePush = () => {
+    setState({
+      showDrawer: true,
+      drawerType: 'push',
+    });
+  }
+
+  const handleCloseDrawer = () => {
+    setState({ showDrawer: false });
+    form.resetFields();
+  }
+
+  const handleOKDrawer = () => {
+    form.validateFields().then(() => {
+      const { remark } = form.getFieldsValue();
+      const value = insureStorageTemp[remark];
+
+      if (drawerType === 'pull') {
+        if (value) {
+          message.error('备注已存在，请重新输入');
+          return;
+        }
+
+        // 获取页面数据
+        sendMessageContent({
+          source: 'popup-to-content',
+          type: 'pull',
+        })
+        return;
+      } else {
+        // 回显页面数据
+        sendMessageContent({
+          source: 'popup-to-content',
+          type: 'push',
+          data: {
+            data: value,
+            paths: flattenObject(value),
+          }
+        })
+      }
+      // 不自动关闭，可能会有多次操作
+      // handleCloseDrawer();
+    })
+  }
+
+  const handleChangeRemark = (e) => {
+    setState({ remark: e.target.value });
+  }
+
+  const handleChangeRemarkWithSelect = (value) => {
+    setState({ remark: value });
+  }
+
+  const renderFormAction = () => {
     return (
-      <div className="tab-content tab-content__random">
-        <Button
-          type="primary"
-          icon={<HighlightOutlined />}
-          onClick={handleRandom}
-        >
-          随机填写表单
-        </Button>
+      <div className="tab-content tab-content__form">
+        <Space wrap>
+          <Button
+            type="primary"
+            icon={<HighlightOutlined />}
+            onClick={handleRandom}
+          >
+            随机填写表单
+          </Button>
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={handlePull}
+          >
+            存储页面数据
+          </Button>
+          <Button
+            type="primary"
+            icon={<Icon type="icon-pushpin-fill" />}
+            onClick={handlePush}
+          >
+            历史数据回显
+          </Button>
+        </Space>
 
         <div className="random-tips">
           {randomTips.map((tip, index) => {
@@ -320,8 +423,8 @@ const Popup = () => {
         key,
         children: (() => {
           switch (key) {
-            case "random":
-              return renderRandom();
+            case "form":
+              return renderFormAction();
             case "idcard":
               return renderIdcard();
             case "bankcard":
@@ -335,6 +438,60 @@ const Popup = () => {
     return tabs;
   };
 
+  const getRemarkList = () => {
+    const remarkList = Object.keys(insureStorageTemp).map(key => {
+      return {
+        label: key,
+        value: key,
+      }
+    });
+    return remarkList;
+  }
+
+  const renderDrawer = () => {
+    const title = drawerType === 'pull' ? '存储页面数据' : '历史数据回显';
+    return (
+      <PopupDrawer
+        title={title}
+        open={showDrawer}
+        onClose={handleCloseDrawer}
+        onCancel={handleCloseDrawer}
+        onOk={handleOKDrawer}
+      >
+        <Form
+          form={form}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 25 }}
+          initialValues={{ remark }}
+        >
+          {
+            drawerType === 'pull' ? (
+              <Form.Item
+                label="唯一标识"
+                name="remark"
+                rules={[{ required: true, message: '请输入唯一标识' }]}
+              >
+                <Input value={remark} onChange={handleChangeRemark} allowClear placeholder="请输入唯一标识" />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                label="选择数据"
+                name="remark"
+                rules={[{ required: true, message: '请选择数据' }]}
+              >
+                <Select
+                  style={{ width: 240 }}
+                  onChange={handleChangeRemarkWithSelect}
+                  options={getRemarkList()}
+                />
+              </Form.Item>
+            )
+          }
+        </Form>
+      </PopupDrawer>
+    )
+  }
+
   return (
     <div className="App">
       <Tabs
@@ -344,6 +501,7 @@ const Popup = () => {
         items={getTabs()}
         onChange={handleChangeTab}
       />
+      {renderDrawer()}
     </div>
   );
 };

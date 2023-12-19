@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { Drawer, FloatButton, ConfigProvider, Button, Space } from 'antd';
 import { useLocalStorageState } from 'ahooks';
 import MessageStorage from '@common/storages/messageStorage';
-import { Icon } from '../../../components';
+import { Icon } from '@common/components';
 import { useBem } from '@common/utils/hooks';
 import { THEME_STORAGE_KEY, THEME_COLOR_MAP } from '@common/constants';
 

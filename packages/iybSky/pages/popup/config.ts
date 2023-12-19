@@ -1,7 +1,7 @@
 export const navs = [
   {
-    key: "random",
-    name: "随机表单",
+    key: "form",
+    name: "表单功能",
   },
   {
     key: "idcard",

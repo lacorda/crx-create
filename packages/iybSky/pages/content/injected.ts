@@ -55,36 +55,60 @@ const withStorage = () => {
   });
 }
 
+const updateSelectAsyncStorage = async (data) => {
+  await fetchTemp(data);
+  withStorage();
+}
+
 const addListener = () => {
   let pageData;
 
   chrome.runtime.onMessage.addListener(async (message) => {
     console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收消息', Date.now(), message);
 
-    const { type, data } = message;;
+    const { source, type, data } = message;;
 
-    if (type === 'iybSKy-to-crx') {
-      pageData = data;
-      await fetchTemp(pageData);
-      withStorage();
+    if (source === 'iybSKy-to-crx') {
+      if (type === 'pageData') {
+        pageData = data;
+        updateSelectAsyncStorage(data);
 
-      chrome.runtime.sendMessage({
-        type: 'iybSkyData',
-        data
-      });
-    }
-
-    if (type === 'popup-to-content') {
-      if (data.action === 'open') {
         chrome.runtime.sendMessage({
-          type: 'iybSkyData',
-          data: pageData
+          ...message,
+          source: 'content-to-crx',
         });
+        return;
       }
 
-      if (data.action === 'random') {
+      if (type === 'formData') {
+        chrome.runtime.sendMessage({
+          ...message,
+          source: 'content-to-crx',
+        });
+        return;
+      }
+
+      return;
+
+    }
+
+    if (source === 'popup-to-content') {
+      if (type === 'open') {
+        chrome.runtime.sendMessage({
+          source: 'content-to-crx',
+          type: 'pageData',
+          data: pageData
+        });
+        return;
+      }
+
+      if (type === 'random' || type === 'pull' || type === 'push') {
         // content -> 网页 发送消息，只能使用window.postMessage
-        window.postMessage({ type: "crx-to-iybSKy", data: data.data }, "*");
+        window.postMessage({
+          ...message,
+          source: "crx-to-iybSKy",
+        }, "*");
+        return;
       }
     }
   })

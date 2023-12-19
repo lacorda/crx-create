@@ -108,6 +108,8 @@ const noSingleWidgets = [
   "cert",
 ];
 export function flattenObject(obj, prefix = "") {
+  if (!obj) return [];
+
   let result = [];
 
   Object.entries(obj).forEach(([key, value]) => {

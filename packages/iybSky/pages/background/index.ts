@@ -11,3 +11,9 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
     sendMessageContent(message);
   }, 300);
 });
+
+// 接收来自插件内部的消息
+// FIXME: 当插件内存在sendMessage时，这个必须要写，否则可能会报错：Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 接收来自插件内部的消息', Date.now(), message, sender, sendResponse);
+});

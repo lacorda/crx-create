@@ -2,10 +2,7 @@ import classnames from 'classnames';
 import { Button, ConfigProvider, Space } from 'antd';
 import { useAsyncEffect } from 'ahooks'
 import { useBem, useStorage } from '@common/utils/hooks';
-import {
-  // Editor,
-  Icon
-} from '../../components';
+import { Icon } from '@common/components';
 import ThemeStorage from '@common/storages/themeStorage';
 import MessageStorage from '@common/storages/messageStorage';
 import { THEME_COLOR_MAP } from '@common/constants';

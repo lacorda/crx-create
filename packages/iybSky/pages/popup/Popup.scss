@@ -1,6 +1,12 @@
 .App {
   background-color: #fff;
 
+  .ant-btn {
+    .ant-btn-icon {
+      font-size: 16px;
+    }
+  }
+
   .random-tips {
     margin-top: 24px;
     padding: 12px;
