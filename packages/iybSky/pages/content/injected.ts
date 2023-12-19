@@ -72,21 +72,12 @@ const addListener = () => {
       if (type === 'pageData') {
         pageData = data;
         updateSelectAsyncStorage(data);
-
-        chrome.runtime.sendMessage({
-          ...message,
-          source: 'content-to-crx',
-        });
-        return;
       }
 
-      if (type === 'formData') {
-        chrome.runtime.sendMessage({
-          ...message,
-          source: 'content-to-crx',
-        });
-        return;
-      }
+      chrome.runtime.sendMessage({
+        ...message,
+        source: 'content-to-crx',
+      });
 
       return;
 
@@ -112,6 +103,26 @@ const addListener = () => {
       }
     }
   })
+
+  // 监听来自网页的消息，window只能在content中使用
+  window.addEventListener("message", (event) => {
+    if (event.source !== window) return;
+
+    const { source, type, data } = event.data;
+
+    if (source === 'iybSKy-to-crx') {
+      console.log('🍄  content: >>>>>>>>>>>>>>>>>> 接收页面消息', Date.now(), event.data);
+      if (type === 'pageData') {
+        pageData = data;
+        updateSelectAsyncStorage(data);
+      }
+
+      chrome.runtime.sendMessage({
+        ...event.data,
+        source: 'content-to-crx',
+      });
+    }
+  }, false);
 }
 
 addListener();
