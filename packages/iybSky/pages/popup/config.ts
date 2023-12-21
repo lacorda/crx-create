@@ -528,9 +528,10 @@ export const emailDomainsEnums = [
 export const asyncWidgets = ["select-async", "picker-stack", "picker-step"];
 
 export const randomTips = [
-  "请在页面渲染完之后打开插件，否则无法获取到页面数据，可以关闭插件后再打开",
-  "填写完之后，无法自动计算保费，请手动修改触发保费计算后再提交",
-  "此功能仅用于模拟假数据，无法用于测试交互逻辑",
+  "插件填充表单后 <span style='color:#ff6e0d'>无法自动计算保费</span>，请手动修改某项 以触发保费计算",
+  "此功能仅用于模拟假数据，<span style='color:#ff6e0d'>无法用于测试交互逻辑</span>",
+  "<span style='color:#ff6e0d'>无法填充</span>受益人弹窗、被保人<span style='color:#ff6e0d'>弹窗</span>内容；多受益人/被保人，<span style='color:#ff6e0d'>只能填充第一项</span>",
+  "目前仅支持个险投保流程 试算页、信息填写页",
   "遇到问题、有建议，企微@陈丽玉",
 ];
 

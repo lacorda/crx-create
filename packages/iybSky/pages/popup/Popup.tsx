@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import {
-  message,
+  message as toast,
   Tabs,
   Button,
   Form,
@@ -106,6 +106,7 @@ const Popup = () => {
         }
 
         if (type === 'formData') {
+          toast.success('存储成功');
           insureStorage.set({
             ...insureStorageTemp,
             [remarkRef.current]: data
@@ -127,7 +128,7 @@ const Popup = () => {
 
   const handleRandom = () => {
     if (!pageDataRef.current) {
-      message.error("未获取到页面数据，请重试");
+      toast.error("未获取到页面数据");
       return;
     }
 
@@ -142,7 +143,7 @@ const Popup = () => {
         data: randomData
       });
     } catch (error) {
-      message.error(error.message || error);
+      toast.error(error.message || error);
       return;
     }
   };
@@ -182,7 +183,7 @@ const Popup = () => {
       const { age, type, days } = marginal;
 
       if (age <= 0 && type === "desc" && days > 0) {
-        message.error("年龄不能为负");
+        toast.error("年龄不能为负");
         return;
       }
 
@@ -230,7 +231,7 @@ const Popup = () => {
 
       if (drawerType === 'pull') {
         if (value) {
-          message.error('备注已存在，请重新输入');
+          toast.error('备注已存在，请重新输入');
           return;
         }
 
@@ -292,10 +293,11 @@ const Popup = () => {
         </Space>
 
         <div className="random-tips">
+          <div className="title">使用说明:</div>
           {randomTips.map((tip, index) => {
             return (
               <div key={index}>
-                {index + 1}. {tip}
+                {index + 1}. <span dangerouslySetInnerHTML={{ __html: tip }}></span>
               </div>
             );
           })}

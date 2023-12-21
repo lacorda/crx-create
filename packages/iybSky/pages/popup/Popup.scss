@@ -10,8 +10,13 @@
   .random-tips {
     margin-top: 24px;
     padding: 12px;
-    color: #ff6e0d;
+    color: #666;
     background-color: #fff6f0;
+
+    .title {
+      font-weight: bold;
+      font-size: 14px;
+    }
   }
 
   .tab-content {
