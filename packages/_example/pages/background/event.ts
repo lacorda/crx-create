@@ -1,21 +1,82 @@
 import MessageStorage from '@common/storages/messageStorage';
 import { sendMessageContent } from '@common/utils/chrome';
+import action from './action';
+import Alarm from './alarms';
 
-// 监听安装事件
+// 设置闹钟
+const myAlarm = new Alarm('my-alarm', { periodInMinutes: 1 });
+
+// 监听安装 / 更新事件
 chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听安装事件', Date.now(), details);
   if (details.reason === 'install') {
-    await MessageStorage.setProperty({
+    MessageStorage.setProperty({
       install: {
         from: 'background'
       }
     });
 
     // 安装完成后打开新页面
-    // chrome.tabs.create({
-    //   url: path
-    // });
+    chrome.tabs.create({
+      url: 'pages/options/index.html'
+    });
+
+    // 设置徽章
+    action.setBadge({
+      text: '1',
+      color: '#fff',
+      backgroundColor: '#f00',
+    });
+
+    chrome.contextMenus.create({
+      id: 'openSidePanel',
+      title: 'Open side panel',
+      contexts: ['all']
+    });
   }
+
+  if (details.reason === 'update') {
+    console.log('🍄  extension updated');
+  }
+});
+
+// 右键菜单栏选择事件
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'openSidePanel') {
+    // 在当前页打开侧边栏
+    chrome.sidePanel.open({ windowId: tab.windowId });
+  }
+});
+
+chrome.downloads.onCreated.addListener((downloadItem) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听下载事件', Date.now(), downloadItem);
+});
+
+chrome.downloads.onChanged.addListener((downloadDelta) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听下载状态变化事件', Date.now(), downloadDelta);
+});
+
+chrome.downloads.onDeterminingFilename.addListener((downloadItem, suggest) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听下载文件名事件', Date.now(), downloadItem, suggest);
+});
+
+chrome.downloads.onErased.addListener((downloadId) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听下载删除事件', Date.now(), downloadId);
+});
+
+chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听通知点击事件', Date.now(), notificationId, buttonIndex);
+});
+
+chrome.notifications.onClosed.addListener((notificationId, byUser) => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听通知关闭事件', Date.now(), notificationId, byUser);
+})
+
+// 监听浏览器打开事件
+chrome.runtime.onStartup.addListener(async () => {
+  console.log('🍄  background: >>>>>>>>>>>>>>>>>> 监听页面打开事件', Date.now());
+
+  myAlarm.checkAlarmState();
 });
 
 // 接收来自插件内部的消息

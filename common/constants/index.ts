@@ -6,4 +6,6 @@ export {
 
 export const THEME_STORAGE_KEY = `${getExtensionId()}_theme`;
 
-export const MESSAGE_STORAGE_KEY = 'MESSAGE_STORAGE';
+export const MESSAGE_STORAGE_KEY = `${getExtensionId()}_MESSAGE_STORAGE`;
+
+export const ALARMS_STORAGE_KEY = `${getExtensionId()}_ALARMS_STORAGE`;

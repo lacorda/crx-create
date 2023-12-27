@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { Button, ConfigProvider, Space } from 'antd';
-import { useAsyncEffect } from 'ahooks'
+import { useAsyncEffect, useSetState } from 'ahooks'
 import { useBem, useStorage } from '@common/utils/hooks';
 import { Icon } from '@common/components';
 import ThemeStorage from '@common/storages/themeStorage';
@@ -13,6 +13,8 @@ import './Popup.scss';
 const prefixCls = 'chrome-extension-popup';
 const itemCls = 'cellitem';
 
+type DownloadItem = chrome.downloads.DownloadItem & { name: string };
+
 const Popup = () => {
   const bem = useBem(prefixCls);
   const itemBem = useBem(itemCls);
@@ -20,14 +22,46 @@ const Popup = () => {
   const theme = useStorage(ThemeStorage);
   const message = useStorage(MessageStorage);
 
+  const [state, setState] = useSetState({
+    downloadItems: [],
+  });
+
   const [themeColor, darkAndLight] = theme.split('-');
-
-
 
   useAsyncEffect(async () => {
     const tab = await getCurrentTab();
     console.log('🍄  popup ui 3', tab);
   }, []);
+
+  const handleGetDownloaded = () => {
+    chrome.downloads.search({ state: 'complete', limit: 3 }, (results) => {
+      console.log('🍄  results', results);
+      (results as DownloadItem[]).forEach((item) => {
+        const { filename } = item;
+        const paths = filename.split('/');
+        const name = paths[paths.length - 1];
+        item.name = name;
+      })
+      setState({ downloadItems: results });
+    });
+  }
+
+  const handleDownload = (item: DownloadItem) => {
+    chrome.downloads.download({ url: item.url, filename: item.name });
+  }
+
+  const handleNotifications = () => {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: icon,
+      title: '通知',
+      message: '这是一条通知',
+      buttons: [
+        { title: '取消' },
+        { title: '确认' },
+      ],
+    });
+  }
 
   return (
     <ConfigProvider theme={{ token: THEME_COLOR_MAP[themeColor] }}>
@@ -67,6 +101,23 @@ const Popup = () => {
               icon={darkAndLight === 'dark' ? <Icon type='icon-moonyueliang' /> : <Icon type='icon-taiyang' />}
               onClick={ThemeStorage.toggleDarkAndLight}
             />
+          </div>
+        </div>
+        <div className={itemBem()}>
+          <div className={itemBem('label')}>下载列表:</div>
+          <div className={itemBem('value')}>
+            <Button type='primary' onClick={handleGetDownloaded} >获取3个曾下载文件</Button>
+            {
+              state.downloadItems.map((item, index) => (
+                <div className='download-item' key={index} onClick={() => { handleDownload(item) }}>{item.filename}</div>
+              ))
+            }
+          </div>
+        </div>
+        <div className={itemBem()}>
+          <div className={itemBem('label')}>通告弹窗:</div>
+          <div className={itemBem('value')}>
+            <Button type='primary' onClick={handleNotifications} >notifications</Button>
           </div>
         </div>
         {/* <div className={itemBem()}>

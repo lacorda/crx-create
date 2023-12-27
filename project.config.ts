@@ -12,6 +12,15 @@ export default {
         "*://localhost/*",
       ],
     },
+    permissions: [
+      'storage',
+      'sidePanel',
+      'alarms',
+      'contextMenus',
+      'downloads',
+      'downloads.open',
+      'notifications',
+    ],
   },
   iybSky: {
     includesFiles: ['popup', 'content', 'background'],
