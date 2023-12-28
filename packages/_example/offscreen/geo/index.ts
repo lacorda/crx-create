@@ -5,7 +5,7 @@ refreshOnUpdate("offscreen/geo");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const { type, target } = message;
-  if (target === 'offscreen' && type === 'get-geolocation') {
+  if (target === 'offscreen' && type === 'geo') {
     navigator.geolocation.getCurrentPosition((res) => {
       sendResponse(clone(res));
     })

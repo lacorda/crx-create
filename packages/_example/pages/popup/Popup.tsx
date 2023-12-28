@@ -68,6 +68,7 @@ const Popup = () => {
   }
 
   const handleClipboardWrite = () => {
+    chrome.runtime.sendMessage({ type: 'clipboard' });
   }
 
   const handleDomParser = () => {

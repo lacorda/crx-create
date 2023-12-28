@@ -96,10 +96,22 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     });
 
     const geolocation = await chrome.runtime.sendMessage({
-      type: 'get-geolocation',
+      type: 'geo',
       target: 'offscreen'
     });
     console.log('🍄  geolocation', geolocation);
+  } else if (type === 'clipboard') {
+    await chrome.offscreen.createDocument({
+      url: '../../offscreen/clipboard/index.html',
+      reasons: [chrome.offscreen.Reason.CLIPBOARD],
+      justification: 'Write text to the clipboard.'
+    });
+
+    chrome.runtime.sendMessage({
+      type: 'clipboard',
+      target: 'offscreen',
+      data: 'clipboard!!!'
+    });
   }
 });
 
