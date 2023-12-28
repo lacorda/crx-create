@@ -20,6 +20,10 @@ export default {
       'downloads',
       'downloads.open',
       'notifications',
+      'offscreen',
+      'geolocation',
+      'clipboardWrite',
+      'tabCapture'
     ],
   },
   iybSky: {

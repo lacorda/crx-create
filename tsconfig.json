@@ -2,7 +2,7 @@
   "compilerOptions": {
     "noEmit": true,
     "baseUrl": ".",
-    "allowJs": false,
+    "allowJs": true,
     "target": "esnext",
     "module": "esnext",
     "jsx": "react-jsx",

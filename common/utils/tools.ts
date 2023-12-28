@@ -3,6 +3,20 @@ import { createRoot } from "react-dom/client";
 
 export { default as toast } from './toast';
 
+// 深拷贝，不支持function、symbol、undefined
+export const clone = (obj) => {
+  const copy = {};
+  if (obj === null || !(obj instanceof Object)) {
+    return obj;
+  } else {
+    for (const p in obj) {
+      copy[p] = clone(obj[p]);
+    }
+  }
+  return copy;
+}
+
+
 // setTimeout as promise
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));

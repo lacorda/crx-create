@@ -8,6 +8,7 @@ import addHmr from './utils/plugins/add-hmr';
 import watchRebuild from './utils/plugins/watch-rebuild';
 import { generateKey } from './utils/tools'
 import { INPUT_FILES } from './utils/constants';
+import { getOffscreenFiles } from './utils/offscreen';
 import projectConfig from './project.config';
 
 const projectName = process.env.__PROJECT_NAME__ || "_example";
@@ -22,6 +23,9 @@ const packageDir = resolve(rootDir, "packages");
 const projectDir = resolve(packageDir, projectName);
 
 const pagesDir = resolve(projectDir, "pages");
+const offscreenDir = resolve(projectDir, "offscreen");
+
+console.log('🍄  offscreen', offscreenDir);
 // 静态资源目录
 const publicDir = resolve(projectDir, "public");
 
@@ -75,15 +79,28 @@ export default defineConfig({
             case 'contentStyle':
               map[key] = resolve(pagesDir, 'content', 'style.scss');
               break;
+            case 'offscreen':
+              getOffscreenFiles(offscreenDir, map);
+              break;
             default:
               map[key] = resolve(pagesDir, key, 'index.html');
               break;
           }
         })
+
+        console.log('🍄  map', map);
         return map;
       })(),
       output: {
-        entryFileNames: `packages/${projectName}/pages/[name]/index.js`,
+        entryFileNames: (chunkInfo) => {
+          const [dirName, name] = chunkInfo.name.split('-');
+          if (dirName === 'offscreen') {
+            console.log('🍄  chunkInfo', dirName, name);
+            return `packages/${projectName}/offscreen/${name}/index.js`;
+          }
+
+          return `packages/${projectName}/pages/[name]/index.js`
+        },
         chunkFileNames: isDev ? `packages/${projectName}/assets/js/[name].js` : `packages/${projectName}/assets/js/[name].[hash].js`,
         assetFileNames: assetInfo => {
           const { name } = path.parse(assetInfo.name);

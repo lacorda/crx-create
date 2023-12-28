@@ -63,6 +63,19 @@ const Popup = () => {
     });
   }
 
+  const handleGEO = () => {
+    chrome.runtime.sendMessage({ type: 'geo' });
+  }
+
+  const handleClipboardWrite = () => {
+  }
+
+  const handleDomParser = () => {
+  }
+
+  const handleTabCapture = () => {
+  }
+
   return (
     <ConfigProvider theme={{ token: THEME_COLOR_MAP[themeColor] }}>
       <div className={classnames(bem(), bem('', darkAndLight))}>
@@ -118,6 +131,17 @@ const Popup = () => {
           <div className={itemBem('label')}>通告弹窗:</div>
           <div className={itemBem('value')}>
             <Button type='primary' onClick={handleNotifications} >notifications</Button>
+          </div>
+        </div>
+        <div className={itemBem()}>
+          <div className={itemBem('label')}>离屏文档:</div>
+          <div className={itemBem('value')}>
+            <Space>
+              <Button type='primary' onClick={handleGEO}>GEO定位</Button>
+              <Button type='primary' onClick={handleClipboardWrite}>复制粘贴</Button>
+              <Button type='primary' onClick={handleDomParser}>解析DOM</Button>
+              <Button type='primary' onClick={handleTabCapture}>网页录制</Button>
+            </Space>
           </div>
         </div>
         {/* <div className={itemBem()}>

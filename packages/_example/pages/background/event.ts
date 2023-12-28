@@ -80,8 +80,27 @@ chrome.runtime.onStartup.addListener(async () => {
 });
 
 // 接收来自插件内部的消息
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log('🍄  background: >>>>>>>>>>>>>>>>>> 接收来自插件内部的消息', Date.now(), message, sender, sendResponse);
+
+  const { type } = message;
+
+  if (type === 'geo') {
+    await chrome.offscreen.createDocument({
+      url: '../../offscreen/geo/index.html',
+      reasons: [
+        chrome.offscreen.Reason.GEOLOCATION ||
+        chrome.offscreen.Reason.DOM_SCRAPING
+      ],
+      justification: 'add justification for geolocation use here'
+    });
+
+    const geolocation = await chrome.runtime.sendMessage({
+      type: 'get-geolocation',
+      target: 'offscreen'
+    });
+    console.log('🍄  geolocation', geolocation);
+  }
 });
 
 // 接收来自网页的消息
