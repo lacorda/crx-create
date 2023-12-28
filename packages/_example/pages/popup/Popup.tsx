@@ -71,10 +71,8 @@ const Popup = () => {
     chrome.runtime.sendMessage({ type: 'clipboard' });
   }
 
-  const handleDomParser = () => {
-  }
-
   const handleTabCapture = () => {
+    chrome.runtime.sendMessage({ type: 'tabCapture' });
   }
 
   return (
@@ -140,7 +138,6 @@ const Popup = () => {
             <Space>
               <Button type='primary' onClick={handleGEO}>GEO定位</Button>
               <Button type='primary' onClick={handleClipboardWrite}>复制粘贴</Button>
-              <Button type='primary' onClick={handleDomParser}>解析DOM</Button>
               <Button type='primary' onClick={handleTabCapture}>网页录制</Button>
             </Space>
           </div>

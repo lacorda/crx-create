@@ -40,6 +40,14 @@ export const genBem = (block?: string, ele?: string, modify?: string) => {
   return bem;
 };
 
+// 获取纯净的url，不包含search和hash
+export const getPureUrl = (url: string) => {
+  const urlObj = new URL(url);
+  urlObj.search = '';
+  urlObj.hash = '';
+  return urlObj.toString();
+}
+
 // 创建dom
 export const createDom = (selector: string) => {
   const $el = document.createElement('div');

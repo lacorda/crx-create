@@ -1,7 +1,8 @@
 import MessageStorage from '@common/storages/messageStorage';
-import { sendMessageContent } from '@common/utils/chrome';
+import { sendMessageContent, getCurrentTab } from '@common/utils/chrome';
 import action from './action';
 import Alarm from './alarms';
+import { getDocument } from './offscreen';
 
 // 设置闹钟
 const myAlarm = new Alarm('my-alarm', { periodInMinutes: 1 });
@@ -86,14 +87,19 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   const { type } = message;
 
   if (type === 'geo') {
-    await chrome.offscreen.createDocument({
-      url: '../../offscreen/geo/index.html',
-      reasons: [
-        chrome.offscreen.Reason.GEOLOCATION ||
-        chrome.offscreen.Reason.DOM_SCRAPING
-      ],
-      justification: 'add justification for geolocation use here'
-    });
+    const url = '/offscreen/geo/index.html';
+    const document = await getDocument(url);
+
+    if (!document) {
+      await chrome.offscreen.createDocument({
+        url,
+        reasons: [
+          chrome.offscreen.Reason.GEOLOCATION ||
+          chrome.offscreen.Reason.DOM_SCRAPING
+        ],
+        justification: 'add justification for geolocation use here'
+      });
+    }
 
     const geolocation = await chrome.runtime.sendMessage({
       type: 'geo',
@@ -101,17 +107,55 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     });
     console.log('🍄  geolocation', geolocation);
   } else if (type === 'clipboard') {
-    await chrome.offscreen.createDocument({
-      url: '../../offscreen/clipboard/index.html',
-      reasons: [chrome.offscreen.Reason.CLIPBOARD],
-      justification: 'Write text to the clipboard.'
-    });
+    const url = '/offscreen/clipboard/index.html';
+    const document = await getDocument(url);
+
+    if (!document) {
+      await chrome.offscreen.createDocument({
+        url,
+        reasons: [chrome.offscreen.Reason.CLIPBOARD],
+        justification: 'Write text to the clipboard.'
+      });
+      return
+    }
 
     chrome.runtime.sendMessage({
       type: 'clipboard',
       target: 'offscreen',
       data: 'clipboard!!!'
     });
+  } else if (type === 'tabCapture') {
+    const url = '/offscreen/tabCapture/index.html';
+    let document = await getDocument(url);
+
+    if (!document) {
+      await chrome.offscreen.createDocument({
+        url,
+        reasons: [chrome.offscreen.Reason.USER_MEDIA],
+        justification: 'Recording from chrome.tabCapture API'
+      });
+      document = { url };
+    }
+
+    const recording = document.url.endsWith('#recording');
+    if (recording) {
+      chrome.runtime.sendMessage({
+        type: 'stop-recording',
+        target: 'offscreen'
+      });
+      chrome.action.setIcon({ path: '/icons/not-recording.png' });
+    } else {
+      const tab = await getCurrentTab();
+      const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+
+      chrome.runtime.sendMessage({
+        type: 'start-recording',
+        target: 'offscreen',
+        data: streamId
+      });
+
+      chrome.action.setIcon({ path: '/icons/recording.png' });
+    }
   }
 });
 

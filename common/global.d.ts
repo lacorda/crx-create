@@ -44,4 +44,6 @@ declare module "react/jsx-runtime" {
   export default any;
 }
 
-declare var __PROJECT_NAME__: string;
+declare let __PROJECT_NAME__: string;
+
+declare let clients: any;
