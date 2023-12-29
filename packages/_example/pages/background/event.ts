@@ -1,8 +1,9 @@
 import MessageStorage from '@common/storages/messageStorage';
 import { sendMessageContent, getCurrentTab } from '@common/utils/chrome';
+import { sleep } from '@common/utils/tools'
 import action from './action';
 import Alarm from './alarms';
-import { getDocument } from './offscreen';
+import { getDocument, closeDocument, OffscreenDocument } from './offscreen';
 
 // 设置闹钟
 const myAlarm = new Alarm('my-alarm', { periodInMinutes: 1 });
@@ -106,6 +107,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       target: 'offscreen'
     });
     console.log('🍄  geolocation', geolocation);
+
+    closeDocument();
   } else if (type === 'clipboard') {
     const url = '/offscreen/clipboard/index.html';
     const document = await getDocument(url);
@@ -116,7 +119,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         reasons: [chrome.offscreen.Reason.CLIPBOARD],
         justification: 'Write text to the clipboard.'
       });
-      return
     }
 
     chrome.runtime.sendMessage({
@@ -124,6 +126,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       target: 'offscreen',
       data: 'clipboard!!!'
     });
+
+    await sleep(1000);
+    closeDocument();
   } else if (type === 'tabCapture') {
     const url = '/offscreen/tabCapture/index.html';
     let document = await getDocument(url);
@@ -134,7 +139,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         reasons: [chrome.offscreen.Reason.USER_MEDIA],
         justification: 'Recording from chrome.tabCapture API'
       });
-      document = { url };
+      document = { url } as OffscreenDocument;
     }
 
     const recording = document.url.endsWith('#recording');
@@ -145,16 +150,16 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       });
       chrome.action.setIcon({ path: '/icons/not-recording.png' });
     } else {
-      const tab = await getCurrentTab();
-      const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+      const tab = await getCurrentTab() as chrome.tabs.Tab;
+      chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id }, (streamId) => {
+        chrome.runtime.sendMessage({
+          type: 'start-recording',
+          target: 'offscreen',
+          data: streamId
+        });
 
-      chrome.runtime.sendMessage({
-        type: 'start-recording',
-        target: 'offscreen',
-        data: streamId
+        chrome.action.setIcon({ path: '/icons/recording.png' });
       });
-
-      chrome.action.setIcon({ path: '/icons/recording.png' });
     }
   }
 });

@@ -46,4 +46,22 @@ declare module "react/jsx-runtime" {
 
 declare let __PROJECT_NAME__: string;
 
-declare let clients: any;
+// 扩展chrome的类型
+declare namespace chrome {
+  export namespace runtime {
+    export function getContexts(options: {
+      contextTypes: string[];
+    }): Promise<Context[]>;
+
+    export interface ExtensionContext {
+      contextId: number;
+      contextType: string;
+      documentId?: number;
+      documentOrigin?: string;
+      documentUrl?: string;
+      incognito: boolean;
+      frameId: number;
+      windowId: number;
+    }
+  }
+}

@@ -25,7 +25,6 @@ const projectDir = resolve(packageDir, projectName);
 const pagesDir = resolve(projectDir, "pages");
 const offscreenDir = resolve(projectDir, "offscreen");
 
-console.log('🍄  offscreen', offscreenDir);
 // 静态资源目录
 const publicDir = resolve(projectDir, "public");
 
@@ -88,14 +87,12 @@ export default defineConfig({
           }
         })
 
-        console.log('🍄  map', map);
         return map;
       })(),
       output: {
         entryFileNames: (chunkInfo) => {
           const [dirName, name] = chunkInfo.name.split('-');
           if (dirName === 'offscreen') {
-            console.log('🍄  chunkInfo', dirName, name);
             return `packages/${projectName}/offscreen/${name}/index.js`;
           }
 

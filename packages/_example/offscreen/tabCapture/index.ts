@@ -13,18 +13,18 @@ async function startRecording(streamId) {
   }
 
   const media = await navigator.mediaDevices.getUserMedia({
-    audio: {
+    audio: ({
       mandatory: {
         chromeMediaSource: 'tab',
         chromeMediaSourceId: streamId
       }
-    },
-    video: {
+    } as MediaTrackConstraints),
+    video: ({
       mandatory: {
         chromeMediaSource: 'tab',
         chromeMediaSourceId: streamId
       }
-    }
+    } as MediaTrackConstraints)
   });
 
   const output = new AudioContext();
@@ -54,6 +54,7 @@ async function stopRecording() {
 }
 
 chrome.runtime.onMessage.addListener(async (message) => {
+  debugger;
   if (message.target === 'offscreen') {
     switch (message.type) {
       case 'start-recording':

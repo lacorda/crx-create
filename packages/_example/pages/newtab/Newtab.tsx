@@ -14,7 +14,7 @@ const Newtab = () => {
     <div
       className="App"
       style={{
-        backgroundColor: darkAndLight === 'light' ? '#ffffff' : '#000000',
+        backgroundColor: darkAndLight === 'dark' ? '#000000' : '#ffffff',
       }}>
       <img src={logo} className="App-logo" alt="logo" />
       Example NewTab

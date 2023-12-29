@@ -4,9 +4,9 @@ refreshOnUpdate("offscreen/clipboard");
 
 console.log('🍄  clipboard');
 
-const textEl = document.querySelector('#text');
+const textEl: HTMLInputElement = document.querySelector('#text');
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message) => {
   const { type, target, data } = message;
   if (target === 'offscreen' && type === 'clipboard') {
     textEl.value = data;
