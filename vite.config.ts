@@ -117,7 +117,8 @@ export default defineConfig({
     copy({
       targets: [
         { src: `${publicDir}/*`, dest: outProjectDir }
-      ]
+      ],
+      hook: 'writeBundle'
     }),
     // react jsx支持
     react(),
