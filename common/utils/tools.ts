@@ -22,6 +22,12 @@ export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+// 首字母大写
+export function firstUpperCase(str: string) {
+  const firstAlphabet = new RegExp(/( |^)[a-z]/, "g");
+  return str.toLowerCase().replace(firstAlphabet, (L) => L.toUpperCase());
+}
+
 /**
  * 生成BEM规范的className
  * @param {string} block

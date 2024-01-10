@@ -46,7 +46,9 @@ const fetchTemp = async (data: Record<string, any>) => {
 const withStorage = () => {
   const map = {};
   for (const [key, value] of Object.entries(storageTemp)) {
-    map[key] = (value as any).options;
+    if (value) {
+      map[key] = (value as any).options;
+    }
   }
 
   selectAsyncStorage.set({

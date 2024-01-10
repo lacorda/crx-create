@@ -2,6 +2,7 @@ import { message } from "antd";
 import dayjs from "dayjs";
 import clonedeep from "lodash.clonedeep";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { firstUpperCase } from '@common/utils/tools'
 
 dayjs.extend(customParseFormat);
 
@@ -90,23 +91,27 @@ export const getRandom = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+// 本身就是对象的widget key
+const keyWithObject = [
+  // 利益演示
+  "benefits",
+  // 职业
+  "occupation",
+  // 地区
+  "city",
+  "place",
+  "area"
+]
+export const isObjectWidget = (key: string) => {
+  return keyWithObject.some((item) => key.endsWith(item) || key.endsWith(firstUpperCase(item))) || key === 'cert';
+}
+
 /**
  *
  * @param obj eg: {detail:{applicant: {name: '张三'}}}
  * @param prefix
  * @returns eg: ['detail.applicant.name']
  */
-const noSingleWidgets = [
-  "benefits",
-  "occupation",
-  "city",
-  "postalcity",
-  "postalCity",
-  "signPlace",
-  "postalarea",
-  "postalArea",
-  "cert",
-];
 export function flattenObject(obj, prefix = "") {
   if (!obj) return [];
 
@@ -119,7 +124,7 @@ export function flattenObject(obj, prefix = "") {
         : `${prefix}[${key}]`
       : key;
 
-    if (typeof obj[key] === "object" && !noSingleWidgets.includes(key)) {
+    if (typeof obj[key] === "object" && !isObjectWidget(key)) {
       if (Array.isArray(obj[key])) {
         obj[key].forEach((item, index) => {
           result = result.concat(
