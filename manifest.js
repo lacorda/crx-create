@@ -35,7 +35,13 @@ const manifest = {
   side_panel: {
     default_path: 'pages/sidepanel/index.html',
   },
-  permissions: ['storage', 'sidePanel'],
+  permissions: [
+    'storage',
+    'sidePanel',
+    // 获取tab信息要包含url时，必须添加tabs权限
+    "tabs",
+    "activeTab"
+  ],
   web_accessible_resources: [
     {
       resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-48.png'],

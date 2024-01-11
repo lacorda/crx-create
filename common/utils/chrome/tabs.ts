@@ -1,7 +1,7 @@
 // https://developer.chrome.com/docs/extensions/reference/api/tabs?hl=zh-cn#method-sendMessage
 
 // 获取当前标签页
-export const getCurrentTab = () => {
+export const getCurrentTab: () => Promise<chrome.tabs.Tab> = () => {
   return new Promise((resolve, reject) => {
     const queryOptions = { active: true, currentWindow: true };
     if (!chrome.tabs) {

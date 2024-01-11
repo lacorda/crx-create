@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
+import qs from 'qs';
 
 export { default as toast } from './toast';
 
@@ -26,6 +27,20 @@ export const sleep = (ms: number) => {
 export function firstUpperCase(str: string) {
   const firstAlphabet = new RegExp(/( |^)[a-z]/, "g");
   return str.toLowerCase().replace(firstAlphabet, (L) => L.toUpperCase());
+}
+
+export function parseUrl(url: string) {
+  const { origin, protocol, host, pathname, search } = new URL(url);
+  // search包含?号，要先去除
+  const query = qs.parse(search.slice(1));
+  return {
+    origin,
+    protocol,
+    host,
+    pathname,
+    search,
+    query,
+  }
 }
 
 /**
