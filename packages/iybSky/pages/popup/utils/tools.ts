@@ -2,7 +2,7 @@ import { message } from "antd";
 import dayjs from "dayjs";
 import clonedeep from "lodash.clonedeep";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { firstUpperCase } from '@common/utils/tools'
+import { firstUpperCase, parseUrl } from '@common/utils/tools'
 
 dayjs.extend(customParseFormat);
 
@@ -237,3 +237,17 @@ export const getSelectAsyncEnums = (options, widgetKey) => {
       return [];
   }
 };
+
+
+const SKY_HOST_REG = /^sky(-)?(test|flow|fat|uat)?\.(baoyun18|iyunbao|baoinsurance|zhongan)\.com$/;
+
+const SKY_PAGES = [
+  '/m/short2020/trial',
+  '/m/short2020/insure'
+]
+export const checkSkyPage = (url) => {
+  if (!url) return;
+
+  const { host, pathname } = parseUrl(url);
+  return (host.match(SKY_HOST_REG) || host.match('localhost:')) && SKY_PAGES.includes(pathname);
+}

@@ -28,7 +28,7 @@ export default {
   },
   iybSky: {
     includesFiles: ['popup', 'content', 'background'],
-    version: "0.0.1",
+    version: "0.0.2",
     name: "表单自动填充工具",
     description: "投保流程辅助工具",
     web_accessible_resources: [

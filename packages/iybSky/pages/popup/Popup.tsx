@@ -14,7 +14,7 @@ import {
 import type { RadioChangeEvent } from "antd";
 import { HighlightOutlined, SaveOutlined } from "@ant-design/icons";
 import { useSetState, useAsyncEffect, useLatest } from "ahooks";
-import { sendMessageContent } from "@common/utils/chrome";
+import { getCurrentTab, sendMessageContent } from "@common/utils/chrome";
 import { Icon } from '@common/components';
 import { SelectPCA, PopupDrawer } from "./components";
 import {
@@ -26,7 +26,7 @@ import {
   randomTips,
 } from "./config";
 
-import { getBirthdate, copy, getRandom, flattenObject } from "./utils/tools";
+import { getBirthdate, copy, getRandom, flattenObject, checkSkyPage } from "./utils/tools";
 import BankCardGenerator from "./utils/bankGen";
 import RandomGenerator, { genCertNo } from "./utils/generator";
 import { SelectPCAValue } from "./types";
@@ -67,7 +67,8 @@ const Popup = () => {
     selectAsyncMap: undefined,
     pageData: undefined,
     showDrawer: false,
-    drawerType: ''
+    drawerType: '',
+    disabledForm: false,
   });
 
   const pageDataRef = useLatest(state.pageData);
@@ -87,13 +88,29 @@ const Popup = () => {
     selectAsyncMap,
     showDrawer,
     drawerType,
+    disabledForm,
   } = state;
 
   useEffect(() => {
-    sendMessageContent({
-      source: "popup-to-content",
-      type: 'open',
-    });
+    // 每次打开都校验当前tab
+    getCurrentTab().then((curTab) => {
+      if (!curTab) {
+        return;
+      }
+
+      if (checkSkyPage(curTab?.url)) {
+        // 仅sky页面上才发送，因为若content里未处理onMessage，这里会报错：
+        // Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+        sendMessageContent({
+          source: "popup-to-content",
+          type: 'open',
+        });
+        setState({ disabledForm: false, tab: navs[0].key })
+      } else {
+        setState({ disabledForm: true, tab: navs[1].key })
+      }
+    })
+
 
     chrome.runtime.onMessage.addListener((message) => {
       const { source, type, data } = message;
@@ -423,6 +440,7 @@ const Popup = () => {
       return {
         label: name,
         key,
+        disabled: key === 'form' && disabledForm,
         children: (() => {
           switch (key) {
             case "form":
